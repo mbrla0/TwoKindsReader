@@ -174,8 +174,8 @@ std::string TwoKinds::ReadAndTidyFromURL(std::string url){
         CURLcode result = curl_easy_perform(handle);
         if(result == CURLE_OK){
             // Tidy result
-            TidyBuffer output = {0};
-            TidyBuffer err = {0};
+            TidyBuffer output = {0, 0, 0, 0, 0};
+            TidyBuffer err = {0, 0, 0, 0, 0};
             int rc = -1;
             Bool ok;
 
