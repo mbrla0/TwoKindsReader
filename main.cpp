@@ -60,7 +60,6 @@ int main(int argc, char *argv[]){
     app.setWindowIcon(QIcon("qrc:/icon.png"));
     engine->rootContext()->setContextProperty("twokinds", &bridge);
     engine->load(QUrl(QStringLiteral("qrc:/Reader.qml")));
-    //engine->load(QUrl(QStringLiteral("qrc:/TestWindow.qml")));
 
     printf("QML Offline Storage Path: %s\n", engine->offlineStoragePath().toStdString().c_str());
 
