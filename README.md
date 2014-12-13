@@ -1,2 +1,2 @@
-TwoKindsReader
+TwoKinds Reader
 ==============
