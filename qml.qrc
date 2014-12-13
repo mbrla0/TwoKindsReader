@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Reader.qml</file>
+        <file>ImageView.qml</file>
+        <file>Bookmarks.qml</file>
+        <file>CircularProgress.qml</file>
+        <file>BookmarkDatabase.js</file>
+        <file>TestWindow.qml</file>
+        <file>OptionsMenu.qml</file>
+        <file>icon.png</file>
+        <file>arrow_up.png</file>
+        <file>arrow_down.png</file>
+        <file>bookmark_remove.png</file>
+        <file>bookmark_add.png</file>
+        <file>error.png</file>
+    </qresource>
+</RCC>
