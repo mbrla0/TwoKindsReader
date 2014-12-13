@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets declarative
+QT += qml quick widgetss
 
 SOURCES += main.cpp \
     twokinds.cpp \
