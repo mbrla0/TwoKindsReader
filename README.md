@@ -26,10 +26,8 @@ Terminal (Linux, Cygwin, Mac, etc.): ```qmake -o Makefile TKReader2.pro ``` foll
 
 Both methods should produce an executable inside the code folder (or some folder near it, when using the QtCreator method).
 
-Copyright stuff
+Copyright notices
 --------------
-
-I only onw this application (See LICENSE)
 
 PugiXML ©2006-2014 Arseny Kapoulkine (See LICENSE.PugiXML)
 
