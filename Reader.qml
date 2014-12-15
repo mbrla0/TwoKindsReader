@@ -369,9 +369,18 @@ ApplicationWindow {
             Label{
                 id: f_bookmark_description
                 y: 10
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors{
+                    left: parent.left
+                    right: parent.right
+
+                    leftMargin: 5
+                    rightMargin: 5
+                }
                 state: "hidden"
                 font.pixelSize: 11
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                clip: false
 
                 states:[
                     State{
@@ -387,10 +396,10 @@ ApplicationWindow {
                         name: "default"
 
                         PropertyChanges {target: f_bookmark_description; opacity: 1}
-                        PropertyChanges {target: footer                ; height:  80}
-                        PropertyChanges {target: f_navigation_controls ; y:       48}
-                        PropertyChanges {target: f_bookmark_toggle     ; y:       24}
-                        PropertyChanges {target: f_expand_options_menu ; y:       24}
+                        PropertyChanges {target: footer                ; height:  68 + f_bookmark_description.paintedHeight}
+                        PropertyChanges {target: f_navigation_controls ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 32}
+                        PropertyChanges {target: f_bookmark_toggle     ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
+                        PropertyChanges {target: f_expand_options_menu ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
                     }
                 ]
 
@@ -406,7 +415,7 @@ ApplicationWindow {
                 function refresh(){
                     // Check if current page is valid
                     if(root.currentPageIndex === 0){
-                        f_bookmark_toggle.state = "none"
+                        f_bookmark_description.text = ""
                         return
                     }
 

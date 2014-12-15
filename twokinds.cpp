@@ -17,9 +17,9 @@ TwoKinds::TwoKinds() : page_database(), cached_archive_length(0){
 TwoKinds::~TwoKinds(){
 }
 
-u32 TwoKinds::GetArchiveLength(){
+u32 TwoKinds::GetArchiveLength(bool update_cache){
     // Use cached version if possible
-    if(this->cached_archive_length != 0)
+    if(this->cached_archive_length != 0 && !update_cache)
         return this->cached_archive_length;
 
     // In case it wasn't cached yet

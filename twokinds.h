@@ -33,7 +33,7 @@ public:
     /**
      * @return The length (in pages) of the TwoKinds archives
      */
-    u32 GetArchiveLength();
+    u32 GetArchiveLength(bool = false);
 
 private:
     PageDatabase page_database;

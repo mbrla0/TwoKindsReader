@@ -60,7 +60,7 @@ Item {
 
         // List delegate
         delegate: Item{
-            height: 48
+            height: label.paintedHeight <= 48? 48 : label.paintedHeight + 24
             anchors.right: parent.right
             anchors.left: parent.left
 
@@ -72,8 +72,18 @@ Item {
 
             // Displays the page index and the description
             Label{
-                anchors.verticalCenter: parent.verticalCenter
+                id: label
+                anchors{
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    right: parent.right
+
+                    leftMargin: 5
+                    rightMargin: 5
+                }
                 font.pixelSize: 16
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
 
                 text: index + " - " + description
             }
