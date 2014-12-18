@@ -17,9 +17,9 @@ TwoKinds::TwoKinds() : page_database(), cached_archive_length(0){
 TwoKinds::~TwoKinds(){
 }
 
-u32 TwoKinds::GetArchiveLength(){
+u32 TwoKinds::GetArchiveLength(bool update_cache){
     // Use cached version if possible
-    if(this->cached_archive_length != 0)
+    if(this->cached_archive_length != 0 && !update_cache)
         return this->cached_archive_length;
 
     // In case it wasn't cached yet
@@ -174,8 +174,8 @@ std::string TwoKinds::ReadAndTidyFromURL(std::string url){
         CURLcode result = curl_easy_perform(handle);
         if(result == CURLE_OK){
             // Tidy result
-            TidyBuffer output = {0};
-            TidyBuffer err = {0};
+            TidyBuffer output = {0, 0, 0, 0, 0};
+            TidyBuffer err = {0, 0, 0, 0, 0};
             int rc = -1;
             Bool ok;
 

@@ -2,8 +2,7 @@
 
 static bool CanFileBeRead(const char* fname){
     FILE *file;
-    if (file = fopen(fname, "r"))
-    {
+    if ((file = fopen(fname, "r"))){
         fclose(file);
         return true;
     }
@@ -73,7 +72,7 @@ std::vector<Page> PageDatabase::GetAllPages(){
 }
 
 /// Callback for creating a page vector (See GetAllPages())
-int PageDatabase::PageVectorCallback(void *memory, int argc, char **argv, char **unused){
+int PageDatabase::PageVectorCallback(void *memory, int argc, char **argv, char **){
     // Create a pointer to the vector at memory
     std::vector<Page>* vector = (std::vector<Page>*) memory;
 

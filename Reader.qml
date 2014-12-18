@@ -35,7 +35,7 @@ ApplicationWindow {
                 name: "hidden"
 
                 // Release top, push bottom upwards and lock options_content's bottom
-                AnchorChanges {target: reader_content ; anchors.top:    0}
+                AnchorChanges {target: reader_content ; anchors.top:    undefined}
                 AnchorChanges {target: reader_content ; anchors.bottom: parent.top}
                 AnchorChanges {target: options_content; anchors.bottom: parent.bottom}
             },
@@ -43,7 +43,7 @@ ApplicationWindow {
                 name: "default"
 
                 // Push bottom, anchor up and release options_content's bottom
-                AnchorChanges {target: options_content; anchors.bottom: 0}
+                AnchorChanges {target: options_content; anchors.bottom: undefined}
                 AnchorChanges {target: reader_content ; anchors.top:    parent.top}
                 AnchorChanges {target: reader_content ; anchors.bottom: parent.bottom}
             }
@@ -188,14 +188,14 @@ ApplicationWindow {
                     name: "hidden"
 
                     // Change anchors to hide
-                    AnchorChanges {target: header; anchors.top: 0}
+                    AnchorChanges {target: header; anchors.top: undefined}
                     AnchorChanges {target: header; anchors.bottom: reader_content.top}
                 },
                 State{
                     name: "default"
 
                     // Change to default position
-                    AnchorChanges {target: header; anchors.bottom: 0}
+                    AnchorChanges {target: header; anchors.bottom: undefined}
                     AnchorChanges {target: header; anchors.top: reader_content.top}
                 }
             ]
@@ -285,14 +285,14 @@ ApplicationWindow {
 
                     // Change anchors to hide
                     AnchorChanges {target: footer; anchors.top: reader_content.bottom}
-                    AnchorChanges {target: footer; anchors.bottom: 0}
+                    AnchorChanges {target: footer; anchors.bottom: undefined}
                 },
                 State{
                     name: "default"
 
                     // Change to default position
                     // Change anchors to hide
-                    AnchorChanges {target: footer; anchors.top: 0}
+                    AnchorChanges {target: footer; anchors.top: undefined}
                     AnchorChanges {target: footer; anchors.bottom: reader_content.bottom}
                 }
             ]
@@ -369,9 +369,18 @@ ApplicationWindow {
             Label{
                 id: f_bookmark_description
                 y: 10
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors{
+                    left: parent.left
+                    right: parent.right
+
+                    leftMargin: 5
+                    rightMargin: 5
+                }
                 state: "hidden"
                 font.pixelSize: 11
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                clip: false
 
                 states:[
                     State{
@@ -387,10 +396,10 @@ ApplicationWindow {
                         name: "default"
 
                         PropertyChanges {target: f_bookmark_description; opacity: 1}
-                        PropertyChanges {target: footer                ; height:  80}
-                        PropertyChanges {target: f_navigation_controls ; y:       48}
-                        PropertyChanges {target: f_bookmark_toggle     ; y:       24}
-                        PropertyChanges {target: f_expand_options_menu ; y:       24}
+                        PropertyChanges {target: footer                ; height:  68 + f_bookmark_description.paintedHeight}
+                        PropertyChanges {target: f_navigation_controls ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 32}
+                        PropertyChanges {target: f_bookmark_toggle     ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
+                        PropertyChanges {target: f_expand_options_menu ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
                     }
                 ]
 
@@ -406,7 +415,7 @@ ApplicationWindow {
                 function refresh(){
                     // Check if current page is valid
                     if(root.currentPageIndex === 0){
-                        f_bookmark_toggle.state = "none"
+                        f_bookmark_description.text = ""
                         return
                     }
 
