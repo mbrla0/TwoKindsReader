@@ -73,6 +73,7 @@ Item {
             // Displays the page index and the description
             Label{
                 id: label
+                color: "#E0DEDB"
                 anchors{
                     verticalCenter: parent.verticalCenter
                     left: parent.left
@@ -105,6 +106,7 @@ Item {
     // Displays if no bookmarks found
     Label{
         id: no_bookmarks
+        color: "#E0DEDB"
         text: ""
         opacity: 0
         anchors.centerIn: parent

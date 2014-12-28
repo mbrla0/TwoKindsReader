@@ -220,6 +220,7 @@ ApplicationWindow {
             Label{
                 id: h_page_indicator
                 y: 6
+                color: "#E0DEDB"
 
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -230,6 +231,7 @@ ApplicationWindow {
             Label{
                 id: h_timestamp
                 y: 26
+                color: "#E0DEDB"
 
                 state: "hidden"
                 font.pixelSize: 10
@@ -341,6 +343,7 @@ ApplicationWindow {
                 Label{
                     id: f_page_indicator
                     anchors.centerIn: parent
+                    color: "#E0DEDB"
 
                     text: currentPageIndex
                 }
@@ -369,6 +372,7 @@ ApplicationWindow {
             Label{
                 id: f_bookmark_description
                 y: 10
+                color: "#E0DEDB"
                 anchors{
                     left: parent.left
                     right: parent.right

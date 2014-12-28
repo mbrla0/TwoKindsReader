@@ -70,6 +70,7 @@ Rectangle {
         Label{
             font.pixelSize: 20
             anchors.centerIn: parent
+            color: "#E0DEDB"
 
             text: "Jump to page"
         }
