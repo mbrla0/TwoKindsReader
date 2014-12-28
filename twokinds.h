@@ -13,7 +13,7 @@
 #define XPATH_LASTET_TIMESTAMP  "//div[@class=\'alt-container\']/p"
 
 #define BASEURL_ARCHIVE "http://twokinds.keenspot.com/archive.php?p="
-#define URL_LASTET      "http://twokinds.keenspot.com/"
+#define URL_MAIN        "http://twokinds.keenspot.com/"
 #define URL_ARCHIVE     "http://twokinds.keenspot.com/archive.php"
 
 namespace TKReader{

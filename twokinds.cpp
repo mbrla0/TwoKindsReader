@@ -8,7 +8,6 @@ const char* XPATH_LASTET_IMG[XPATH_COUNT_LASTET_IMG]   = {"//div[@class=\'alt-co
 const char* XPATH_ARCHIVE_IMG[XPATH_COUNT_ARCHIVE_IMG] = {"//div[@class=\'comic\']/p[@id=\'cg_img\']/a[@href]/img[@src]", "//div[@class=\'comic\']/p[@id=\'cg_img\']/img[@src]"};
 
 
-
 namespace TKReader{
 
 TwoKinds::TwoKinds() : page_database(), cached_archive_length(0){
@@ -97,8 +96,11 @@ Page TwoKinds::GetPage(u32 index){
             // We got an error
             return Page::GetError();
 
-        pugi::xml_node image = query_results[0].node();
-        page.remote_url = image.attribute("src").as_string();
+        pugi::xml_node image  = query_results[0].node();
+        std::string image_src = image.attribute("src").as_string();
+
+        // Checks if image_src is a full URL, if not, append URL_MAIN to it
+        page.remote_url = image_src.find("://") == std::string::npos ? URL_MAIN + image_src : image_src;
 
         // Query timestamp and add it to page (Two parts that will be blended in the future)
         std::string timestamp_0;
@@ -113,7 +115,7 @@ Page TwoKinds::GetPage(u32 index){
         page.timestamp = timestamp_0 + timestamp_1;
     }else{
         // Load lastet page and load it into a xml_document
-        std::string str_lastet_page = TwoKinds::ReadAndTidyFromURL(URL_LASTET);
+        std::string str_lastet_page = TwoKinds::ReadAndTidyFromURL(URL_MAIN);
 
         pugi::xml_document lastet_page;
         pugi::xml_parse_result parse_result = lastet_page.load_buffer(str_lastet_page.c_str(), str_lastet_page.size());
@@ -138,7 +140,7 @@ Page TwoKinds::GetPage(u32 index){
 
 
         pugi::xml_node image = query_results[0].node();
-        page.remote_url = std::string(URL_LASTET) + image.attribute("src").as_string();
+        page.remote_url = std::string(URL_MAIN) + image.attribute("src").as_string();
 
         // Query timestamp and add it to page
         pugi::xml_node timestamp = lastet_page.first_child().select_nodes(XPATH_LASTET_TIMESTAMP)[0].node();
