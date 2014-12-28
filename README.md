@@ -26,6 +26,37 @@ Terminal (Linux, Cygwin, Mac, etc.): ```qmake -o Makefile TKReader2.pro ``` foll
 
 Both methods should produce an executable inside the code folder (or some folder near it, when using the QtCreator method).
 
+<b>Note for users who are experiencing the following error:</b>
+  ```
+  In file included from ..\TKReader2\main.cpp:9:0:
+  
+..\TKReader2\common.h:21:9: error: 'u_int8_t' does not name a type
+ typedef u_int8_t  u8;
+         ^
+         
+..\TKReader2\common.h:22:9: error: 'u_int16_t' does not name a type
+ tydedef u_int16_t u16;
+         ^
+
+..\TKReader2\common.h:23:9: error: 'u_int32_t' does not name a type
+ typedef u_int32_t u32;
+         ^
+
+..\TKReader2\common.h:24:9: error: 'u_int64_t' does not name a type
+ typedef u_int64_t u64;
+         ^
+  ```
+  
+  The code at ```common.h, lines 21-24``` must be changed to:
+  ```
+typedef uint8_t  u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+  ```
+  
+  My apologies for the inconvenience.
+
 Copyright notices
 --------------
 
