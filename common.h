@@ -37,12 +37,14 @@ typedef int64_t   i64;
 #include <tidy.h>
 #include <buffio.h>
 #include <unistd.h>
+
 #elif defined _WIN32 || defined _WIN64 || defined __CYGWIN__ || __CYGWIN32__
-#define MKDIR(path) CreateDirectory(path)
-#define DATA_FOLDER std::string(std::getenv("%APPDATA%")).append(APP_NAME + "/")
+#define MKDIR(path) system(("mkdir " + std::string(path)).c_str())
+#define DATA_FOLDER std::string(std::getenv("APPDATA")).append("\\" + APP_NAME + "\\")
 #include <tidy/tidy.h>
 #include <tidy/buffio.h>
 #include <windows.h>
+
 #else
 #error "System is not supported"
 #endif
