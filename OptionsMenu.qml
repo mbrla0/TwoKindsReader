@@ -13,7 +13,7 @@ Rectangle {
         id: bookmarks
 
         anchors{
-            top:    jump_to_button.bottom
+            top:    open_in_browser.bottom
             left:   parent.left
             right:  parent.right
             bottom: parent.bottom
@@ -84,6 +84,41 @@ Rectangle {
         Rectangle{
             height: 1
             color: "#505050"
+
+            anchors {
+                right: parent.right
+                left: parent.left
+                bottom: parent.bottom
+            }
+        }
+    }
+
+    // Open in browser button
+    Rectangle{
+        id: open_in_browser
+        height: 52
+        color: "#101010"
+        anchors.left:  parent.left
+        anchors.right: parent.right
+        anchors.top: jump_to_button.bottom
+
+        Label{
+            font.pixelSize: 20
+            anchors.centerIn: parent
+            color: "#E0DEDB"
+
+            text: "Open in Browser"
+        }
+
+        MouseArea{
+            anchors.fill: parent
+            onClicked: { twokinds.openUrl(twokinds.getRawUrl(currentPageIndex)); resume() }
+        }
+
+        // Separator
+        Rectangle{
+            height: 5
+            color: "#707070"
 
             anchors {
                 right: parent.right

@@ -1,12 +1,13 @@
 #include "twokinds.h"
 
-// Define all the <Plural of XPath> that may be used to query the lastet page and the archived pages (See twokinds.h)
-#define XPATH_COUNT_LASTET_IMG  2
+// Define all the <Plural of XPath> that may be used to query the latest page and the archived pages (See twokinds.h)
+#define XPATH_COUNT_LATEST_IMG  2
 #define XPATH_COUNT_ARCHIVE_IMG 2
+#define XPATH_COUNT_LATEST_TIMESTAMP  2
 
-const char* XPATH_LASTET_IMG[XPATH_COUNT_LASTET_IMG]   = {"//div[@class=\'alt-container\']/a[2]/img[@src]", "//div[@class=\'alt-container\']/img[@src]"};
-const char* XPATH_ARCHIVE_IMG[XPATH_COUNT_ARCHIVE_IMG] = {"//div[@class=\'comic\']/p[@id=\'cg_img\']/a[@href]/img[@src]", "//div[@class=\'comic\']/p[@id=\'cg_img\']/img[@src]"};
-
+const char* XPATH_LATEST_IMG[XPATH_COUNT_LATEST_IMG]             = {"//div[@class=\'alt-container\']/a[2]/img[@src]", "//div[@class=\'alt-container\']/img[@src]"};
+const char* XPATH_ARCHIVE_IMG[XPATH_COUNT_ARCHIVE_IMG]           = {"//div[@class=\'comic\']/p[@id=\'cg_img\']/a[@href]/img[@src]", "//div[@class=\'comic\']/p[@id=\'cg_img\']/img[@src]"};
+const char* XPATH_LATEST_TIMESTAMP[XPATH_COUNT_LATEST_TIMESTAMP] = {"//div[@class=\'alt-container\']/p", "//div[@class=\'alt-container\']/p[2]"};
 
 namespace TKReader{
 
@@ -57,9 +58,16 @@ u32 TwoKinds::GetArchiveLength(bool update_cache){
     return 0;
 }
 
-Page TwoKinds::GetPage(u32 index){
-    // First: try loading page from database
+std::string TwoKinds::GetRawUrl(u32 index){
+    // Returns the site URL, from where the images are extracted
+    return index > 0 ? BASEURL_ARCHIVE + std::to_string(index) : URL_MAIN;
+}
+
+Page TwoKinds::GetPage(u32 index){   
+    // First: try loading page from database (setting the raw_url)
     Page db = this->page_database.GetPage(index);
+    db.raw_url = GetRawUrl(index);
+
     if(db.remote_url != URL_FAIL)
         return db;
 
@@ -72,8 +80,11 @@ Page TwoKinds::GetPage(u32 index){
     // Retrieve page url
     bool archived = index > 0;
     if(archived && index <= GetArchiveLength()){
+        // Set the page's raw_url
+        page.raw_url = GetRawUrl(index);
+
         // Load archive page for given index and load it into a xml_document (In case the last entry is selected, change the url page number to 0)
-        std::string str_archive_page = TwoKinds::ReadAndTidyFromURL(BASEURL_ARCHIVE + std::to_string(index));
+        std::string str_archive_page = TwoKinds::ReadAndTidyFromURL(page.raw_url);
 
         pugi::xml_document archive_page;
         pugi::xml_parse_result parse_result = archive_page.load_buffer(str_archive_page.c_str(), str_archive_page.size());
@@ -90,7 +101,7 @@ Page TwoKinds::GetPage(u32 index){
         do{
             query_results = archive_page.first_child().select_nodes(XPATH_ARCHIVE_IMG[i]);
             ++i;
-        }while(query_results.size() <= 0 && i < sizeof(XPATH_COUNT_ARCHIVE_IMG));
+        }while(query_results.size() <= 0 && i < XPATH_COUNT_ARCHIVE_IMG);
 
         if(query_results.size() <= 0)
             // We got an error
@@ -114,11 +125,14 @@ Page TwoKinds::GetPage(u32 index){
 
         page.timestamp = timestamp_0 + timestamp_1;
     }else{
-        // Load lastet page and load it into a xml_document
-        std::string str_lastet_page = TwoKinds::ReadAndTidyFromURL(URL_MAIN);
+        // Set the page's url_raw
+        page.raw_url = GetRawUrl(index);
 
-        pugi::xml_document lastet_page;
-        pugi::xml_parse_result parse_result = lastet_page.load_buffer(str_lastet_page.c_str(), str_lastet_page.size());
+        // Load latest page and load it into a xml_document
+        std::string str_latest_page = TwoKinds::ReadAndTidyFromURL(page.raw_url);
+
+        pugi::xml_document latest_page;
+        pugi::xml_parse_result parse_result = latest_page.load_buffer(str_latest_page.c_str(), str_latest_page.size());
 
         if(parse_result.status != pugi::status_ok){
             page.remote_url = URL_FAIL;
@@ -126,25 +140,50 @@ Page TwoKinds::GetPage(u32 index){
         }
 
         // Query the image's url and title, add them to page
-        pugi::xpath_node_set query_results;
+        pugi::xpath_node_set query_results_image;
 
         u32 i = 0;
         do{
-            query_results = lastet_page.first_child().select_nodes(XPATH_LASTET_IMG[i]);
+            query_results_image = latest_page.first_child().select_nodes(XPATH_LATEST_IMG[i]);
             ++i;
-        }while(query_results.size() <= 0 && i < sizeof(XPATH_COUNT_LASTET_IMG));
+        }while(query_results_image.size() <= 0 && i < XPATH_COUNT_LATEST_IMG);
 
-        if(query_results.size() <= 0)
+        if(query_results_image.size() <= 0)
             // We got an error
             return Page::GetError();
 
 
-        pugi::xml_node image = query_results[0].node();
+        pugi::xml_node image = query_results_image[0].node();
         page.remote_url = std::string(URL_MAIN) + image.attribute("src").as_string();
 
         // Query timestamp and add it to page
-        pugi::xml_node timestamp = lastet_page.first_child().select_nodes(XPATH_LASTET_TIMESTAMP)[0].node();
-        page.timestamp = timestamp.text().as_string();
+        pugi::xpath_node_set query_results_timestamp;
+
+        i = 0;
+        do{
+            query_results_timestamp = latest_page.first_child().select_nodes(XPATH_LATEST_TIMESTAMP[i]);
+            ++i;
+        }while([query_results_timestamp]() -> bool{
+                    // Lambda, returns true if the node_set is empty or it's first string is empty
+
+                    if(query_results_timestamp.size() <= 0) return true;
+                    else if(std::string(query_results_timestamp[0].node().text().as_string()) == "")
+                        return true;
+
+                    return false;
+                }() && i < XPATH_COUNT_LATEST_TIMESTAMP);
+
+        if(query_results_timestamp.size() <= 0){
+            // Couldn't find timestamp
+            page.timestamp = "Timestamp not found";
+        }else if(std::string(query_results_timestamp[0].node().text().as_string()) == ""){
+            // Timestamp was empty
+            page.timestamp = "Timestamp not found";
+        }else{
+            // Set the timestamp
+            pugi::xml_node timestamp = query_results_timestamp[0].node();
+            page.timestamp = timestamp.text().as_string();
+        }
     }
 
     // Save page on database

@@ -6,11 +6,10 @@
 
 // Defines for things that might/will change in the future
 // So when I get to change them, I won't have to search trough my code to find these strings '>.<
-// NOTE: XPATH_LASTET_IMG and XPATH_ARCHIVE_IMG moved to twokinds.cpp
+// NOTE: XPATH_LATEST_IMG, XPATH_ARCHIVE_IMG and XPATH_LATEST_TIMESTAMP moved to twokinds.cpp
 
 #define XPATH_ARCHIVE_LAST_URL  "//a[@id=\'cg_back\']"
 #define XPATH_ARCHIVE_TIMESTAMP "//div[@class=\'comic\']/p[@class=\'date\']"
-#define XPATH_LASTET_TIMESTAMP  "//div[@class=\'alt-container\']/p"
 
 #define BASEURL_ARCHIVE "http://twokinds.keenspot.com/archive.php?p="
 #define URL_MAIN        "http://twokinds.keenspot.com/"
@@ -29,6 +28,14 @@ public:
      * @return Corresponding page
      */
     Page GetPage(u32);
+
+    /**
+     * This method only exists for situations where only the raw_url is needed
+     * Just for performace reasons
+     *
+     * @brief Get the raw URL for the page
+     */
+    std::string GetRawUrl(u32);
 
     /**
      * @return The length (in pages) of the TwoKinds archives

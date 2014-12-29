@@ -5,10 +5,7 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 #include <QInputDialog>
-#include <QPainter>
-#include <QtDeclarative/QDeclarativeItem>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include <QDesktopServices>
 #include "common.h"
 #include "twokinds.h"
 
@@ -23,11 +20,13 @@ public:
     explicit QmlBridge(TKReader::TwoKinds*, QWidget *parent = 0);
     virtual ~QmlBridge();
 
-    Q_INVOKABLE int  getArchiveLength();
-    Q_INVOKABLE void getPage(int);
+    Q_INVOKABLE int     getArchiveLength();
+    Q_INVOKABLE void    getPage(int);
     Q_INVOKABLE QString getTextFromDialog(QString, QString);
     Q_INVOKABLE QString getDataFolder();
-    Q_INVOKABLE int  getIntFromDialog(QString, QString, int, int);
+    Q_INVOKABLE int     getIntFromDialog(QString, QString, int, int);
+    Q_INVOKABLE void    openUrl(QString);
+    Q_INVOKABLE QString getRawUrl(int);
 private:
     TKReader::TwoKinds* twokinds;
 

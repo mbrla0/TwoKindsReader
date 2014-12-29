@@ -57,7 +57,7 @@ ApplicationWindow {
             }
         ]
 
-        // Enter lastet page when completed
+        // Enter latest page when completed
         Component.onCompleted: enterPage(0);
 
         // Click to toggle header and footer
@@ -613,8 +613,8 @@ ApplicationWindow {
 
             // Set labels
             h_timestamp.text = ""
-            h_page_indicator.text = index === 0 ? "Lastet page" : "Page number " + index;
-            f_page_indicator.text = index === 0 ? "Lastet" : index;
+            h_page_indicator.text = index === 0 ? "Latest page" : "Page number " + index;
+            f_page_indicator.text = index === 0 ? "Latest" : index;
 
             // Call page load timer
             enter_page_timer.restart()

@@ -12,5 +12,6 @@
         <file>bookmark_remove.png</file>
         <file>bookmark_add.png</file>
         <file>error.png</file>
+        <file>open_in_browser.png</file>
     </qresource>
 </RCC>

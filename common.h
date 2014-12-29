@@ -32,6 +32,7 @@ typedef int64_t   i64;
 #define APP_NAME std::string("TKReader")
 
 #if defined __linux__ || defined __MACH__ || defined _APPLE_
+#define SYSTEM(command) system(command)
 #define MKDIR(path) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 #define DATA_FOLDER std::string(std::getenv("HOME")).append("/." + APP_NAME + "/")
 #include <tidy.h>
@@ -39,7 +40,8 @@ typedef int64_t   i64;
 #include <unistd.h>
 
 #elif defined _WIN32 || defined _WIN64 || defined __CYGWIN__ || __CYGWIN32__
-#define MKDIR(path) system(("mkdir " + std::string(path)).c_str())
+#define SYSTEM(command) system(command)
+#define MKDIR(path) {std::string path_string = path; std::replace(path_string.begin(), path_string.end(), '/', '\\'); SYSTEM(("mkdir " + path_string).c_str());}
 #define DATA_FOLDER std::string(std::getenv("APPDATA")).append("\\" + APP_NAME + "\\")
 #include <tidy/tidy.h>
 #include <tidy/buffio.h>
@@ -55,12 +57,13 @@ typedef int64_t   i64;
 namespace TKReader{
 
 /**
- * Describes a single page from either the archive or the lastet page
+ * Describes a single page from either the archive or the latest page
  */
 struct Page{
     u32 index;
     bool use_local;
 
+    std::string raw_url;
     std::string remote_url;
     std::string local_url;
 
