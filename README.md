@@ -18,7 +18,7 @@ The following libraries are also required: ```sqlite3```, ```curl``` and ```tidy
 Super quick and easy tutorial of justice for compiling
 --------------
 Skip this part if you already know how to compile or just hated the title. 
-Seriously now, this is aimed for *somewhat* begginers who still want to compile (Maybe for the lack of a binnary version? =P).
+Seriously now, this is aimed for *somewhat* begginers who still want to compile (See Binary folder for binaries).
 
 QtCreator (Mostly Windows users doing this):  ```Open project using QtCreator```,  ```Switch to Release mode```, ```Build project```.
 
