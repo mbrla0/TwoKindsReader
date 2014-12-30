@@ -11,7 +11,7 @@ Also, Flora will get mad at you if you don't at least try it out...
 
 Requirements
 --------------
-This application requires ```Qt 5.3``` (Don't think version 5.3 is really required, but no other version was tested yet).
+This application requires ```Qt 5.3+```.
 
 The following libraries are also required: ```sqlite3```, ```curl``` and ```tidy```.
 
