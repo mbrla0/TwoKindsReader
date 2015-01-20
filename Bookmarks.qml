@@ -83,6 +83,7 @@ Item {
                     rightMargin: 5
                 }
                 font.pixelSize: 16
+                font.family: "Open Sans"
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
 

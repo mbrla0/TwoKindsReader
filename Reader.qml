@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.LocalStorage 2.0
 import QtQuick.Window 2.0
+import QtGraphicalEffects 1.0
 
 import "BookmarkDatabase.js" as BookmarkDatabase
 
@@ -53,7 +54,7 @@ ApplicationWindow {
                 from: "*"
                 to: "*"
 
-                AnchorAnimation {targets: [reader_content, options_content]}
+                AnchorAnimation {targets: [reader_content, options_content]; duration: 650}
             }
         ]
 
@@ -168,16 +169,12 @@ ApplicationWindow {
         }
 
         // Header
-        Rectangle{
+        Item{
             id: header
-            height: 48
+            height: 52
             state: "default"
             anchors.left: parent.left
             anchors.right: parent.right
-            gradient: Gradient{
-                GradientStop{position: 0; color: "#DD707070"}
-                GradientStop{position: 1; color: "#DD505050"}
-            }
 
             Behavior on height { NumberAnimation { } }
 
@@ -214,13 +211,32 @@ ApplicationWindow {
                 }
             ]
 
-            // ============== Elements and stuff ==============
+            // ============== Coloring and effects ==============
+
+            Rectangle{
+                id: h_color
+                anchors.fill: parent
+
+                color: "#AAC0C0C0"
+            }
+
+            FastBlur{
+                anchors.fill: h_color
+                source: main_image
+
+                radius: 64
+            }
+
+            // ============== Elements ==============
 
             // Page indicator, displays the current page
             Label{
                 id: h_page_indicator
-                y: 6
-                color: "#E0DEDB"
+                y: 4
+                color: "#202020"
+                font.family: "Open Sans"
+                font.pixelSize: 16
+                font.bold: true
 
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -231,10 +247,11 @@ ApplicationWindow {
             Label{
                 id: h_timestamp
                 y: 26
-                color: "#E0DEDB"
+                color: "#202020"
+                font.family: "Open Sans"
 
                 state: "hidden"
-                font.pixelSize: 10
+                font.pixelSize: 12
 
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -266,16 +283,12 @@ ApplicationWindow {
         } // Header
 
         // Footer
-        Rectangle{
+        Item{
             id: footer
             height: 64
             state: "default"
             anchors.left: parent.left
             anchors.right: parent.right
-            gradient: Gradient{
-                GradientStop{position: 0; color: "#DD707070"}
-                GradientStop{position: 1; color: "#DD505050"}
-            }
 
             Behavior on height { NumberAnimation { } }
 
@@ -313,258 +326,340 @@ ApplicationWindow {
                 }
             ]
 
-            // ============== Navigation contols ==============
+            // ============== Coloring and effects ==============
+
+            Rectangle{
+                id: f_color
+                anchors.fill: parent
+
+                color: "#AAC0C0C0"
+            }
+
+            FastBlur{
+                anchors.fill: f_color
+                source: main_image
+
+                radius: 64
+            }
+
+            // ============== Elements ==============
 
             Item{
-                id: f_navigation_controls
-                y: 32
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.fill: parent
 
-                Behavior on y { NumberAnimation {} }
+                // ============== Navigation contols ==============
 
-                // Previous
-                Button{
-                    id: btn_previous
+                Item{
+                    id: f_navigation_controls
+                    y: 32
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    // Stay to the left of f_page_indicator
-                    anchors{
-                        right: f_page_indicator.left
-                        rightMargin: 10
-                        verticalCenter: f_page_indicator.verticalCenter
+                    Behavior on y { NumberAnimation {} }
+
+                    // Previous
+                    Image{
+                        id: btn_previous
+                        height: 32
+
+                        // Stay to the left of f_page_indicator
+                        anchors{
+                            right: f_page_indicator.left
+                            rightMargin: 10
+                            verticalCenter: f_page_indicator.verticalCenter
+                        }
+
+                        fillMode: Image.PreserveAspectFit
+                        source: "qrc:/arrow_left.png"
+
+                        // Go to the previous page when clicked
+                        MouseArea{
+                            anchors.centerIn: parent
+
+                            width:  parent.paintedWidth  + 8
+                            height: parent.paintedHeight + 16
+
+                            onClicked: enterPage(currentPageIndex === 0 ? twokinds.getArchiveLength() : currentPageIndex - 1)
+                        }
                     }
 
-                    text: "Previous"
+                    // Other page indicator
+                    Label{
+                        id: f_page_indicator
+                        anchors.centerIn: parent
+                        color: "#202020"
+                        font.family: "Open Sans"
+                        font.pixelSize: 16
 
-                    // Go to the previous page when clicked
-                    onClicked: enterPage(currentPageIndex === 0 ? twokinds.getArchiveLength() : currentPageIndex - 1)
+                        text: currentPageIndex
+                    }
+
+                    // Next
+                    Image{
+                        height: 32
+
+                        // Stay to the right of f_page_indicator
+                        anchors{
+                            left: f_page_indicator.right
+                            leftMargin: 10
+                            verticalCenter: f_page_indicator.verticalCenter
+                        }
+
+                        fillMode: Image.PreserveAspectFit
+                        source: "qrc:/arrow_right.png"
+
+                        // Go to the next page when clicked
+                        MouseArea{
+                            anchors.centerIn: parent
+
+                            width:  parent.paintedWidth  + 5
+                            height: parent.paintedHeight + 5
+
+                            onClicked: enterPage(currentPageIndex === twokinds.getArchiveLength() ? 0 : currentPageIndex + 1)
+                        }
+                    }
                 }
 
-                // Other page indicator
+                // ============== Other stuff ==============
+
+                // Displays the bookmark description in case of the page being bookmarked
                 Label{
-                    id: f_page_indicator
-                    anchors.centerIn: parent
-                    color: "#E0DEDB"
-
-                    text: currentPageIndex
-                }
-
-                // Next
-                Button{
-                    width: btn_previous.width
-
-                    // Stay to the right of f_page_indicator
+                    id: f_bookmark_description
+                    y: 10
+                    color: "#202020"
+                    font.family: "Open Sans"
                     anchors{
-                        left: f_page_indicator.right
-                        leftMargin: 10
-                        verticalCenter: f_page_indicator.verticalCenter
+                        left: parent.left
+                        right: parent.right
+
+                        leftMargin: 5
+                        rightMargin: 5
                     }
+                    state: "hidden"
+                    font.pixelSize: 13
+                    wrapMode: Text.Wrap
+                    horizontalAlignment: Text.AlignHCenter
+                    clip: false
 
-                    text: "Next"
+                    states:[
+                        State{
+                            name: "hidden"
 
-                    // Go to the next page when clicked
-                    onClicked: enterPage(currentPageIndex === twokinds.getArchiveLength() ? 0 : currentPageIndex + 1)
-                }
-            }
+                            PropertyChanges {target: f_bookmark_description; opacity: 0}
+                            PropertyChanges {target: footer                ; height:  64}
+                            PropertyChanges {target: f_navigation_controls ; y:       32}
+                            PropertyChanges {target: f_bookmark_toggle     ; y:       8}
+                            PropertyChanges {target: f_expand_options_menu ; y:       8}
+                        },
+                        State{
+                            name: "default"
 
-            // ============== Other stuff ==============
-
-            // Displays the bookmark description in case of the page being bookmarked
-            Label{
-                id: f_bookmark_description
-                y: 10
-                color: "#E0DEDB"
-                anchors{
-                    left: parent.left
-                    right: parent.right
-
-                    leftMargin: 5
-                    rightMargin: 5
-                }
-                state: "hidden"
-                font.pixelSize: 11
-                wrapMode: Text.Wrap
-                horizontalAlignment: Text.AlignHCenter
-                clip: false
-
-                states:[
-                    State{
-                        name: "hidden"
-
-                        PropertyChanges {target: f_bookmark_description; opacity: 0}
-                        PropertyChanges {target: footer                ; height:  64}
-                        PropertyChanges {target: f_navigation_controls ; y:       32}
-                        PropertyChanges {target: f_bookmark_toggle     ; y:       8}
-                        PropertyChanges {target: f_expand_options_menu ; y:       8}
-                    },
-                    State{
-                        name: "default"
-
-                        PropertyChanges {target: f_bookmark_description; opacity: 1}
-                        PropertyChanges {target: footer                ; height:  68 + f_bookmark_description.paintedHeight}
-                        PropertyChanges {target: f_navigation_controls ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 32}
-                        PropertyChanges {target: f_bookmark_toggle     ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
-                        PropertyChanges {target: f_expand_options_menu ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
-                    }
-                ]
-
-                Behavior on opacity { NumberAnimation { } }
-
-                onTextChanged:{
-                    if(text === "")
-                        state = "hidden";
-                    else
-                        state = "default";
-                }
-
-                function refresh(){
-                    // Check if current page is valid
-                    if(root.currentPageIndex === 0){
-                        f_bookmark_description.text = ""
-                        return
-                    }
-
-                    // Open bookmark database
-                    var bookmarks = LocalStorage.openDatabaseSync("TKReader.Bookmarks", "1.0", "Bookmarks from TKReader", 100000)
-                    bookmarks.transaction(
-                        function(tx){
-                            // Try to select the bookmark which has the current pages's index
-                            var selection = tx.executeSql("SELECT * FROM BOOKMARKS WHERE _index = " + root.currentPageIndex + ";");
-
-                            // Check if any was found
-                            f_bookmark_description.text = selection.rows.length > 0 ? selection.rows.item(0).description : ""
+                            PropertyChanges {target: f_bookmark_description; opacity: 1}
+                            PropertyChanges {target: footer                ; height:  68 + f_bookmark_description.paintedHeight}
+                            PropertyChanges {target: f_navigation_controls ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 32}
+                            PropertyChanges {target: f_bookmark_toggle     ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
+                            PropertyChanges {target: f_expand_options_menu ; y:      (68 + f_bookmark_description.paintedHeight) - 64 + 8}
                         }
-                    );
-                }
-            }
+                    ]
 
-            // Options button (Arrow pointing up)
-            Item{
-                id: f_expand_options_menu
-                width:  48
-                height: 48
-                y: 8
+                    Behavior on opacity { NumberAnimation { } }
 
-                anchors{
-                    rightMargin: 15
-                    right: parent.right
-                }
-
-                Behavior on y { NumberAnimation {} }
-
-                // Open menu once clicked
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked: reader_content.state = "hidden"
-                }
-
-                Image{
-                    anchors.centerIn: parent
-                    height: 24
-
-                    fillMode: Image.PreserveAspectFit
-                    source: "qrc:/arrow_up.png"
-                }
-            }
-
-            // Bookmark/Remove button
-            Item{
-                id: f_bookmark_toggle
-                width:  48
-                height: 48
-                y: 8
-                state: "none"
-                anchors{
-                    leftMargin: 15
-                    left: parent.left
-                }
-
-                Behavior on y { NumberAnimation {} }
-
-                // Changes the icon
-                states:[
-                    State{
-                        name: "none"
-
-                        PropertyChanges { target: icon_add   ; opacity: 0 }
-                        PropertyChanges { target: icon_remove; opacity: 0 }
-                    },
-                    State{
-                        name: "add"
-
-                        PropertyChanges { target: icon_add   ; opacity: 1 }
-                        PropertyChanges { target: icon_remove; opacity: 0 }
-                    },
-                    State{
-                        name: "remove"
-
-                        PropertyChanges { target: icon_remove; opacity: 1 }
-                        PropertyChanges { target: icon_add   ; opacity: 0 }
+                    onTextChanged:{
+                        if(text === "")
+                            state = "hidden";
+                        else
+                            state = "default";
                     }
-                ]
 
-                // Toggle bookmark
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked:{
-                        if(f_bookmark_toggle.state === "add"){
-                            // Add bookmark and refresh bokmarks menu (TODO: Add description dialog)
-                            BookmarkDatabase.insertBookmark(currentPageIndex, twokinds.getTextFromDialog("Bookmark", "Bookmark description:"))
-                            options_content.refresh()
-                            f_bookmark_toggle.refresh()
-                            f_bookmark_description.refresh()
-                        }else if(f_bookmark_toggle.state !== "none"){
-                            // Remove bookmark
-                            BookmarkDatabase.deleteBookmark(currentPageIndex)
-                            options_content.refresh()
-                            f_bookmark_toggle.refresh()
-                            f_bookmark_description.refresh()
+                    function refresh(){
+                        // Check if current page is valid
+                        if(root.currentPageIndex === 0){
+                            f_bookmark_description.text = ""
+                            return
+                        }
+
+                        // Open bookmark database
+                        var bookmarks = LocalStorage.openDatabaseSync("TKReader.Bookmarks", "1.0", "Bookmarks from TKReader", 100000)
+                        bookmarks.transaction(
+                            function(tx){
+                                // Try to select the bookmark which has the current pages's index
+                                var selection = tx.executeSql("SELECT * FROM BOOKMARKS WHERE _index = " + root.currentPageIndex + ";");
+
+                                // Check if any was found
+                                f_bookmark_description.text = selection.rows.length > 0 ? selection.rows.item(0).description : ""
+                            }
+                        );
+                    }
+                }
+
+                // Options button (Arrow pointing up)
+                Item{
+                    id: f_expand_options_menu
+                    width:  48 + f_expand_options_menu_label.paintedWidth + 5
+                    height: 48
+                    y: 8
+
+                    anchors{
+                        rightMargin: 15
+                        right: parent.right
+                    }
+
+                    Behavior on y { NumberAnimation {} }
+
+                    // Open menu once clicked
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: reader_content.state = "hidden"
+                    }
+
+                    Label{
+                        id: f_expand_options_menu_label
+
+                        color: "#202020"
+                        font.pixelSize: 16
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: f_expand_options_menu_icon.left
+                        anchors.rightMargin: 10
+
+                        text: "Options"
+                    }
+
+                    Image{
+                        id: f_expand_options_menu_icon
+
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        height: 24
+
+                        fillMode: Image.PreserveAspectFit
+                        source: "qrc:/arrow_up.png"
+                    }
+                }
+
+                // Bookmark/Remove button
+                Item{
+                    id: f_bookmark_toggle
+                    width:  48 + f_bookmark_toggle_label.paintedWidth + 5
+                    height: 48
+                    y: 8
+                    state: "none"
+                    anchors{
+                        leftMargin: 15
+                        left: parent.left
+                    }
+
+                    Behavior on y { NumberAnimation {} }
+
+                    // Changes the icon
+                    states:[
+                        State{
+                            name: "none"
+
+                            PropertyChanges { target: f_bookmark_toggle_label      ; text: ""   }
+                            PropertyChanges { target: f_bookmark_toggle_label      ; opacity: 0 }
+                            PropertyChanges { target: f_bookmark_toggle_icon_add   ; opacity: 0 }
+                            PropertyChanges { target: f_bookmark_toggle_icon_remove; opacity: 0 }
+                        },
+                        State{
+                            name: "add"
+
+                            PropertyChanges { target: f_bookmark_toggle_label      ; text: "Bookmark" }
+                            PropertyChanges { target: f_bookmark_toggle_label      ; opacity: 1       }
+                            PropertyChanges { target: f_bookmark_toggle_icon_add   ; opacity: 1       }
+                            PropertyChanges { target: f_bookmark_toggle_icon_remove; opacity: 0       }
+                        },
+                        State{
+                            name: "remove"
+
+                            PropertyChanges { target: f_bookmark_toggle_label      ; text: "Remove" }
+                            PropertyChanges { target: f_bookmark_toggle_label      ; opacity: 1     }
+                            PropertyChanges { target: f_bookmark_toggle_icon_remove; opacity: 1     }
+                            PropertyChanges { target: f_bookmark_toggle_icon_add   ; opacity: 0     }
+                        }
+                    ]
+
+                    // Toggle bookmark
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked:{
+                            if(f_bookmark_toggle.state === "add"){
+                                // Add bookmark and refresh bokmarks menu (TODO: Add description dialog)
+                                BookmarkDatabase.insertBookmark(currentPageIndex, twokinds.getTextFromDialog("Bookmark", "Bookmark description:"))
+                                options_content.refresh()
+                                f_bookmark_toggle.refresh()
+                                f_bookmark_description.refresh()
+                            }else if(f_bookmark_toggle.state !== "none"){
+                                // Remove bookmark
+                                BookmarkDatabase.deleteBookmark(currentPageIndex)
+                                options_content.refresh()
+                                f_bookmark_toggle.refresh()
+                                f_bookmark_description.refresh()
+                            }
                         }
                     }
-                }
 
-                // Icon
-                Image{
-                    id: icon_add
-                    anchors.centerIn: parent
-                    height: 32
+                    // Text
+                    Label{
+                        id: f_bookmark_toggle_label
+                        color: "#202020"
+                        font.family: "Open Sans"
+                        font.pixelSize: 16
 
-                    fillMode: Image.PreserveAspectFit
-                    source: "qrc:/bookmark_add.png"
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: f_bookmark_toggle_icon_add.right
+                        anchors.leftMargin: 10
 
-                    Behavior on opacity { NumberAnimation {} }
-                }
-                Image{
-                    id: icon_remove
-                    anchors.centerIn: parent
-                    height: 28
-
-                    fillMode: Image.PreserveAspectFit
-                    source: "qrc:/bookmark_remove.png"
-
-                    Behavior on opacity { NumberAnimation {} }
-                }
-
-                function refresh(){
-                    // Check if current page is valid
-                    if(root.currentPageIndex === 0){
-                        f_bookmark_toggle.state = "none"
-                        return
+                        Behavior on opacity { NumberAnimation {} }
                     }
 
-                    // Open bookmark database
-                    var bookmarks = LocalStorage.openDatabaseSync("TKReader.Bookmarks", "1.0", "Bookmarks from TKReader", 100000)
-                    bookmarks.transaction(
-                        function(tx){
-                            // Try to select the bookmark which has the current pages's index
-                            var selection = tx.executeSql("SELECT * FROM BOOKMARKS WHERE _index = " + root.currentPageIndex + ";");
+                    // Icon
+                    Image{
+                        id: f_bookmark_toggle_icon_add
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        height: 32
 
-                            // Check if any was found
-                            f_bookmark_toggle.state = selection.rows.length > 0 ? "remove" : "add"
+                        fillMode: Image.PreserveAspectFit
+                        source: "qrc:/bookmark_add.png"
+
+                        Behavior on opacity { NumberAnimation {} }
+                    }
+                    Image{
+                        id: f_bookmark_toggle_icon_remove
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        height: 28
+
+                        fillMode: Image.PreserveAspectFit
+                        source: "qrc:/bookmark_remove.png"
+
+                        Behavior on opacity { NumberAnimation {} }
+                    }
+
+                    function refresh(){
+                        // Check if current page is valid
+                        if(root.currentPageIndex === 0){
+                            f_bookmark_toggle.state = "none"
+                            return
                         }
-                    );
+
+                        // Open bookmark database
+                        var bookmarks = LocalStorage.openDatabaseSync("TKReader.Bookmarks", "1.0", "Bookmarks from TKReader", 100000)
+                        bookmarks.transaction(
+                            function(tx){
+                                // Try to select the bookmark which has the current pages's index
+                                var selection = tx.executeSql("SELECT * FROM BOOKMARKS WHERE _index = " + root.currentPageIndex + ";");
+
+                                // Check if any was found
+                                f_bookmark_toggle.state = selection.rows.length > 0 ? "remove" : "add"
+                            }
+                        );
+                    }
                 }
             }
         } // Footer
+
+        // Header/Footer effects
+
     }
 
     // Options menu below reader

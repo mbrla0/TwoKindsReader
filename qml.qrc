@@ -13,5 +13,7 @@
         <file>bookmark_add.png</file>
         <file>error.png</file>
         <file>open_in_browser.png</file>
+        <file>arrow_right.png</file>
+        <file>arrow_left.png</file>
     </qresource>
 </RCC>

@@ -69,6 +69,7 @@ Rectangle {
 
         Label{
             font.pixelSize: 20
+            font.family: "Open Sans"
             anchors.centerIn: parent
             color: "#E0DEDB"
 
@@ -104,6 +105,7 @@ Rectangle {
 
         Label{
             font.pixelSize: 20
+            font.family: "Open Sans"
             anchors.centerIn: parent
             color: "#E0DEDB"
 
